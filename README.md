@@ -4,7 +4,7 @@ A side project to get 3-way offline voice translation running on a barebones Ras
 
 This project brings back some memories from my PhD days working with constrained hardware. The challenge is always the same: watch your memory budget, pick the right model sizes and figure out how to work around the limitations of the device.
 
-## Why this is tricky 
+## Thoughts
 
 Running a full speech-to-text, LLM translation, and text-to-speech pipeline on a $50 (ish, as of Feb 2026)single-board computer with only 4GB of RAM is an interesting challenge for 2026. 
 
