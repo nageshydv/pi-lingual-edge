@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>π-Lingual Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,100;1,9..144,100&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #f5f2ed;
+  font-family: 'DM Mono', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity: 0.7;
+}
+.page { max-width: 900px; width: 100%; position: relative; z-index: 1; }
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid #1a1714;
+  margin-bottom: 32px;
+}
+.title {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 100;
+  font-size: 36px;
+  color: #1a1714;
+  letter-spacing: -0.5px;
+}
+.title span { color: #c8441a; }
+.subtitle {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: #b0aca5;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="masthead">
+    <div class="title">π<span>-Lingual</span> — Architecture</div>
+    <div class="subtitle">Raspberry Pi 4 · Edge AI · Offline</div>
+  </div>
+
+  <svg width="100%" viewBox="0 0 860 540" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5"
+              markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <!-- ── HARDWARE LAYER (bottom) ── -->
+    <!-- Pi 4 container -->
+    <rect x="1" y="320" width="858" height="218" stroke="#1a1714" stroke-width="1" fill="#edeae3"/>
+    <text x="14" y="340" font-family="'DM Mono',monospace" font-size="8"
+          fill="#b0aca5" letter-spacing="2">RASPBERRY PI 4  ·  ARM CORTEX-A72  ·  4GB RAM  ·  RASPBIAN BOOKWORM</text>
+    <line x1="1" y1="346" x2="859" y2="346" stroke="#1a1714" stroke-width="0.5" stroke-dasharray="4 3"/>
+
+    <!-- USB Mic -->
+    <rect x="20" y="362" width="120" height="56" stroke="#b87010" stroke-width="1" fill="#faebd0"/>
+    <text x="80" y="383" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">USB MIC</text>
+    <text x="80" y="399" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="10" font-weight="500" fill="#b87010">hw:3,0</text>
+    <text x="80" y="413" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">44100Hz · mono</text>
+
+    <!-- ALSA box -->
+    <rect x="20" y="438" width="120" height="40" stroke="#7a7670" stroke-width="1" fill="#f5f2ed"/>
+    <text x="80" y="453" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">ALSA</text>
+    <text x="80" y="468" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" fill="#3d3a35">sounddevice</text>
+
+    <!-- resample -->
+    <rect x="160" y="362" width="120" height="56" stroke="#7a7670" stroke-width="1" fill="#f5f2ed"/>
+    <text x="220" y="383" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">RESAMPLE</text>
+    <text x="220" y="399" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="10" font-weight="500" fill="#3d3a35">scipy.signal</text>
+    <text x="220" y="413" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">44100 → 16000Hz</text>
+
+    <!-- whisper.cpp -->
+    <rect x="300" y="355" width="160" height="70" stroke="#0e8a74" stroke-width="1.5" fill="#e8f5f1"/>
+    <text x="380" y="374" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">WHISPER.CPP</text>
+    <text x="380" y="392" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="11" font-weight="500" fill="#0e8a74">ggml-tiny</text>
+    <text x="380" y="408" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">C++ · no PyTorch · ARM native</text>
+    <text x="380" y="420" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#0e8a74">~75MB · ~3s on Pi 4</text>
+
+    <!-- Ollama -->
+    <rect x="480" y="355" width="160" height="70" stroke="#c8441a" stroke-width="1.5" fill="#fce8e0"/>
+    <text x="560" y="374" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">OLLAMA</text>
+    <text x="560" y="392" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="11" font-weight="500" fill="#c8441a">qwen2.5:1.5b</text>
+    <text x="560" y="408" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">localhost:11434 · ~1GB RAM</text>
+    <text x="560" y="420" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#c8441a">~15–25s translate on Pi 4</text>
+
+    <!-- Piper binary -->
+    <rect x="660" y="355" width="100" height="44" stroke="#2255cc" stroke-width="1" fill="#e0eaf8"/>
+    <text x="710" y="372" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">PIPER</text>
+    <text x="710" y="388" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" font-weight="500" fill="#2255cc">ARM64 binary</text>
+
+    <!-- gTTS -->
+    <rect x="660" y="409" width="100" height="44" stroke="#b87010" stroke-width="1" fill="#faebd0"/>
+    <text x="710" y="426" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">gTTS</text>
+    <text x="710" y="442" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" font-weight="500" fill="#b87010">Hindi only</text>
+
+    <!-- Headphones output -->
+    <rect x="780" y="362" width="68" height="56" stroke="#7a7670" stroke-width="1" fill="#f5f2ed"/>
+    <text x="814" y="383" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1">3.5mm</text>
+    <text x="814" y="398" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" fill="#3d3a35">hw:2,0</text>
+    <text x="814" y="412" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">aplay</text>
+
+    <!-- Hardware arrows -->
+    <line x1="140" y1="390" x2="159" y2="390" stroke="#b87010" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="280" y1="390" x2="299" y2="390" stroke="#7a7670" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="460" y1="390" x2="479" y2="390" stroke="#0e8a74" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="640" y1="377" x2="659" y2="377" stroke="#2255cc" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="640" y1="403" x2="659" y2="429" stroke="#b87010" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="760" y1="377" x2="779" y2="385" stroke="#2255cc" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="760" y1="429" x2="779" y2="405" stroke="#b87010" stroke-width="1" marker-end="url(#arr)"/>
+
+    <!-- ── SOFTWARE LAYER (middle) ── -->
+    <rect x="1" y="160" width="858" height="148" stroke="#1a1714" stroke-width="1" fill="#f5f2ed"/>
+    <text x="14" y="178" font-family="'DM Mono',monospace" font-size="8"
+          fill="#b0aca5" letter-spacing="2">PYTHON APPLICATION  ·  FLASK + SSE  ·  THREADING</text>
+    <line x1="1" y1="184" x2="859" y2="184" stroke="#1a1714" stroke-width="0.5" stroke-dasharray="4 3"/>
+
+    <!-- Flask/SSE -->
+    <rect x="20" y="196" width="130" height="92" stroke="#1a1714" stroke-width="1" fill="#edeae3"/>
+    <text x="85" y="214" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">WEB SERVER</text>
+    <text x="85" y="232" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="10" font-weight="500" fill="#1a1714">Flask</text>
+    <text x="85" y="248" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#3d3a35">port 5000</text>
+    <text x="85" y="263" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">/translate  POST</text>
+    <text x="85" y="278" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">/stream     SSE</text>
+
+    <!-- translator_pi.py -->
+    <rect x="170" y="196" width="200" height="92" stroke="#0e8a74" stroke-width="1.5" fill="#e8f5f1"/>
+    <text x="270" y="214" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">CORE ENGINE</text>
+    <text x="270" y="232" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="10" font-weight="500" fill="#0e8a74">translator_pi.py</text>
+    <text x="270" y="250" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#3d3a35">record_audio()</text>
+    <text x="270" y="264" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#3d3a35">transcribe()</text>
+    <text x="270" y="278" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#3d3a35">translate()  speak()</text>
+
+    <!-- session worker thread -->
+    <rect x="390" y="196" width="160" height="92" stroke="#7a7670" stroke-width="1" fill="#f5f2ed"/>
+    <text x="470" y="214" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">WORKER THREAD</text>
+    <text x="470" y="232" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="10" font-weight="500" fill="#3d3a35">threading.Thread</text>
+    <text x="470" y="250" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">session lock</text>
+    <text x="470" y="264" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">one session at a time</text>
+    <text x="470" y="278" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">event queue → SSE</text>
+
+    <!-- SSE events -->
+    <rect x="570" y="196" width="160" height="92" stroke="#2255cc" stroke-width="1" fill="#e0eaf8"/>
+    <text x="650" y="214" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">SSE EVENTS</text>
+    <text x="650" y="232" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="10" font-weight="500" fill="#2255cc">text/event-stream</text>
+    <text x="650" y="250" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#3d3a35">terminal · pipeline</text>
+    <text x="650" y="264" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#3d3a35">rms · phase · done</text>
+    <text x="650" y="278" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5">real-time streaming</text>
+
+    <!-- Software arrows -->
+    <line x1="150" y1="242" x2="169" y2="242" stroke="#1a1714" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="370" y1="242" x2="389" y2="242" stroke="#0e8a74" stroke-width="1" marker-end="url(#arr)"/>
+    <line x1="550" y1="242" x2="569" y2="242" stroke="#7a7670" stroke-width="1" marker-end="url(#arr)"/>
+
+    <!-- Software → Hardware vertical arrows -->
+    <line x1="270" y1="289" x2="270" y2="319" stroke="#0e8a74" stroke-width="1"
+          stroke-dasharray="3 3" marker-end="url(#arr)"/>
+    <line x1="380" y1="389" x2="300" y2="320" stroke="#0e8a74" stroke-width="0.5"
+          stroke-dasharray="2 3" opacity="0.4"/>
+
+    <!-- ── BROWSER LAYER (top) ── -->
+    <rect x="1" y="1" width="858" height="146" stroke="#1a1714" stroke-width="1" fill="#f5f2ed"/>
+    <text x="14" y="19" font-family="'DM Mono',monospace" font-size="8"
+          fill="#b0aca5" letter-spacing="2">BROWSER  ·  ANY DEVICE ON LOCAL NETWORK  ·  http://&lt;pi-ip&gt;:5000</text>
+    <line x1="1" y1="25" x2="859" y2="25" stroke="#1a1714" stroke-width="0.5" stroke-dasharray="4 3"/>
+
+    <!-- Terminal panel -->
+    <rect x="20" y="38" width="220" height="90" stroke="#1a1714" stroke-width="1" fill="#edeae3"/>
+    <text x="130" y="56" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">TERMINAL OUTPUT</text>
+    <text x="130" y="74" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" fill="#0e8a74">✓ pi-lingual ready</text>
+    <text x="130" y="89" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" fill="#b0aca5">● recording 6s</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" fill="#b87010">EN  Hello, how are you?</text>
+    <text x="130" y="119" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="9" fill="#c8441a">HI  नमस्ते, आप कैसे हैं?</text>
+
+    <!-- Waveform panel -->
+    <rect x="260" y="38" width="160" height="90" stroke="#1a1714" stroke-width="1" fill="#edeae3"/>
+    <text x="340" y="56" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">WAVEFORM</text>
+    <!-- mini waveform bars -->
+    <rect x="275" y="95" width="5" height="12" fill="#b87010" opacity="0.3"/>
+    <rect x="283" y="88" width="5" height="19" fill="#b87010" opacity="0.5"/>
+    <rect x="291" y="80" width="5" height="27" fill="#b87010" opacity="0.7"/>
+    <rect x="299" y="72" width="5" height="35" fill="#b87010" opacity="0.9"/>
+    <rect x="307" y="78" width="5" height="29" fill="#b87010" opacity="0.8"/>
+    <rect x="315" y="85" width="5" height="22" fill="#b87010" opacity="0.6"/>
+    <rect x="323" y="91" width="5" height="16" fill="#b87010" opacity="0.4"/>
+    <rect x="331" y="88" width="5" height="19" fill="#b87010" opacity="0.5"/>
+    <rect x="339" y="75" width="5" height="32" fill="#b87010" opacity="0.85"/>
+    <rect x="347" y="83" width="5" height="24" fill="#b87010" opacity="0.65"/>
+    <rect x="355" y="92" width="5" height="15" fill="#b87010" opacity="0.35"/>
+    <rect x="363" y="87" width="5" height="20" fill="#b87010" opacity="0.5"/>
+    <line x1="275" y1="107" x2="393" y2="107" stroke="#1a1714" stroke-width="0.5" opacity="0.2"/>
+
+    <!-- Pipeline panel -->
+    <rect x="440" y="38" width="180" height="90" stroke="#1a1714" stroke-width="1" fill="#edeae3"/>
+    <text x="530" y="56" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#7a7670" letter-spacing="1.5">PIPELINE</text>
+    <rect x="452" y="63" width="5" height="5" fill="#0e8a74"/>
+    <text x="462" y="71" font-family="'DM Mono',monospace" font-size="9" fill="#0e8a74">Microphone</text>
+    <rect x="452" y="78" width="5" height="5" fill="#0e8a74"/>
+    <text x="462" y="86" font-family="'DM Mono',monospace" font-size="9" fill="#0e8a74">Whisper.cpp</text>
+    <rect x="452" y="93" width="5" height="5" fill="#c8441a"/>
+    <text x="462" y="101" font-family="'DM Mono',monospace" font-size="9" fill="#c8441a">Ollama LLM  ←active</text>
+    <rect x="452" y="108" width="5" height="5" fill="#b0aca5"/>
+    <text x="462" y="116" font-family="'DM Mono',monospace" font-size="9" fill="#b0aca5">Piper / gTTS</text>
+
+    <!-- Record button -->
+    <rect x="640" y="38" width="200" height="90" stroke="#1a1714" stroke-width="1.5" fill="#edeae3"/>
+    <rect x="660" y="80" width="160" height="30" stroke="#1a1714" stroke-width="1.5" fill="#f5f2ed"/>
+    <text x="740" y="100" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="10" fill="#1a1714" letter-spacing="2">⏺  RECORD</text>
+    <text x="740" y="58" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5" letter-spacing="1">PRESS TO SPEAK</text>
+
+    <!-- Browser → Flask vertical arrow (SSE back) -->
+    <line x1="650" y1="148" x2="650" y2="158" stroke="#2255cc" stroke-width="1"
+          marker-end="url(#arr)"/>
+    <text x="656" y="156" font-family="'DM Mono',monospace" font-size="7"
+          fill="#2255cc">SSE</text>
+
+    <!-- Flask → Browser arrow -->
+    <line x1="85" y1="159" x2="85" y2="147" stroke="#1a1714" stroke-width="1"
+          marker-end="url(#arr)"/>
+
+    <!-- Layer labels on right -->
+    <text x="848" y="80" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5" letter-spacing="1"
+          transform="rotate(90, 848, 80)">BROWSER</text>
+    <text x="848" y="240" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5" letter-spacing="1"
+          transform="rotate(90, 848, 240)">PYTHON</text>
+    <text x="848" y="430" text-anchor="middle" font-family="'DM Mono',monospace"
+          font-size="8" fill="#b0aca5" letter-spacing="1"
+          transform="rotate(90, 848, 430)">HARDWARE</text>
+
+    <!-- Legend -->
+    <rect x="20" y="500" width="8" height="8" fill="#0e8a74"/>
+    <text x="34" y="509" font-family="'DM Mono',monospace" font-size="8" fill="#7a7670">offline / local</text>
+    <rect x="130" y="500" width="8" height="8" fill="#c8441a"/>
+    <text x="144" y="509" font-family="'DM Mono',monospace" font-size="8" fill="#7a7670">active / processing</text>
+    <rect x="280" y="500" width="8" height="8" fill="#2255cc"/>
+    <text x="294" y="509" font-family="'DM Mono',monospace" font-size="8" fill="#7a7670">streaming / network</text>
+    <rect x="430" y="500" width="8" height="8" fill="#b87010"/>
+    <text x="444" y="509" font-family="'DM Mono',monospace" font-size="8" fill="#7a7670">audio / english</text>
+    <rect x="560" y="500" width="8" height="8" fill="#b0aca5"/>
+    <text x="574" y="509" font-family="'DM Mono',monospace" font-size="8" fill="#7a7670">idle / metadata</text>
+
+  </svg>
+</div>
+</body>
+</html>
